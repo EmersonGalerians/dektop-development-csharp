@@ -2,45 +2,97 @@
 using GerenciamentoFuncionario.Comuns.ProvedorDados;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace GerenciamentoFuncionario.AcessoDados
 {
     public class FuncionarioProvedorDados : IFuncionarioProvedorDados
     {
-        private List<Funcionario> Funcionarios { get; set; }
+        private readonly Contexto _contexto;
 
-        public FuncionarioProvedorDados()
+        public FuncionarioProvedorDados() {
+            _contexto = new Contexto();
+        }
+        public void AtualizaFuncionario(Funcionario funcionarioAtualizado)
         {
-            Funcionarios = new List<Funcionario> {
-                new Funcionario("Fulano de Tal", 1, false),
-                new Funcionario("Ciclano de Tal", 2, true),
-                new Funcionario("Beltrano de Tal", 3, true)
-            };
+            _contexto.Funcionarios.ForEach(f =>
+            {
+                if (f.Id == funcionarioAtualizado.Id)
+                {
+                    f.NomeCompleto = funcionarioAtualizado.NomeCompleto;
+                    f.SetCargoId(funcionarioAtualizado.CargoId);
+                    f.SetBeberCafe(funcionarioAtualizado.EBebedorCafe);
+                }
+            }
+
+
+
+           );
         }
 
-        public void AtualizaFuncionario(Funcionario funcionario)
+        public void ExcluiFuncionarioPorId(int id)
         {
-            throw new System.NotImplementedException();
+            var funcionario = RecuperaFuncionarioPorId(id);
+            ExcluiFuncionario(funcionario);
         }
 
         public void ExcluiFuncionario(Funcionario funcionario)
         {
-            throw new System.NotImplementedException();
+            _contexto.Funcionarios.Remove(funcionario);
         }
+
 
         public Funcionario RecuperaFuncionarioPorId(int id)
         {
-            throw new System.NotImplementedException();
+            //x é tudo e qualquer elemento da lista
+            //cada elemento da lista será testado
+            //x vai recever o valor do id que você quer pesquisar, ai vai procurar o id na lista
+            //return _contexto.Funcionarios.Find(x => x.Id == id);
+            //return _contexto.Funcionarios.FirstOrDefault(x => x.Id == id);
+            return _contexto.Funcionarios.Where(x => x.Id == id).FirstOrDefault();
         }
+
+
 
         public void SalvaFuncionario(Funcionario funcionario)
         {
-            Debug.WriteLine($"Funcionário salvo: {funcionario.PrimeiroNome}");
+            //Debug.WriteLine($"Funcionário salvo: {funcionario.PrimeiroNome}");
+            var id = GeradorDeId();
+            funcionario.Id = id;
+            _contexto.Funcionarios.Add(funcionario);
         }
-
-        public IEnumerable<Funcionario> CarregaFuncionarios()
+        private int GeradorDeId()
         {
-            return Funcionarios;
+            //TODO : olhar lista e ve qual é o maior id
+            //TODO =  PARA FAZER
+            var maiorId = _contexto.Funcionarios.Max(x => x.Id);
+
+
+
+            //var temId = true;
+            //while (true)
+            //{
+            //    maiorId++; //maiorId = maiorId + 1
+            //    temId = _contexto.Funcionarios.Any(x => x.Id.Equals(maiorId));
+            //}
+            bool temId;
+            do
+            {
+                maiorId++;
+                temId = _contexto.Funcionarios.Any(x => x.Id.Equals(maiorId));
+            } while (temId);
+
+
+
+            return maiorId;
+
+            //equal -> ==
+
+
         }
+            public IEnumerable<Funcionario> CarregaFuncionarios()
+            {
+                return _contexto.Funcionarios;
+            }
     }
 }

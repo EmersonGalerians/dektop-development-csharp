@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NewRepo\src\Gerenciamento_Funcionario.AcessData\Gerenciamento_Funcionario.AcessData.csproj" />
+    <ProjectReference Include="..\GerenciamentoFuncionario.Comuns\GerenciamentoFuncionario.Comuns.csproj" />
   </ItemGroup>
 
 </Project>
